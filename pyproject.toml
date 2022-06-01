@@ -1,12 +1,12 @@
 [tool.poetry]
 name = "lojack-clients"
-version = "1.0.0"
+version = "1.0.1"
 description = "A collection of unofficial client libraries for accessing Spireon's LoJack APIs"
 readme = "README.md"
 packages = [
     { include = "lojack_clients", from = "src" },
 ]
-include = ["src/lojack_clients/*/py.typed"]
+include = ["src/lojack_clients/*/py.typed", "openapi/*/openapi.yaml"]
 keywords = ["lojack", "spireon", "sdk"]
 classifiers = [
     "License :: OSI Approved :: MIT License",
