@@ -1,0 +1,126 @@
+openapi: 3.0.3
+info:
+  title: Spireon Automotive API
+  version: 1.0.0
+  description: API documentation for Spireon automotive service
+servers:
+  - url: https://automotive.spireon.com
+security:
+  - UserToken: []
+paths:
+  /automotive/dealerProfile:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/AppToken'
+        - $ref: '#/components/parameters/CorrelationId'
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  dealershipId: 
+                    type: string
+                    example: 38262739272BDQYAS2GA
+                  dealershipName:
+                    type: string
+                    example: Frank's Toyota Brimington
+                  dealershipAddress:
+                    type: object
+                    properties:
+                      line1:
+                        type: string
+                        example: 1234 Street Rd
+                      line2:
+                        type: string
+                        example: ''
+                      city:
+                        type: string
+                        example: Brimington
+                      stateOrProvince:
+                        type: string
+                        example: ST
+                      postalCode:
+                        type: string
+                        example: '12356'
+                  mainPhoneNumber:
+                    type: string
+                    example: '508193371'
+                  servicePhoneNumber:
+                    type: string
+                    example: '508128492'
+                  primaryFranchise:
+                    type: string
+                    example: Ford
+                  websiteUrl:
+                    type: string
+                    format: url
+                  serviceUrl:
+                    type: string
+                    format: url
+                  profileImageUrl:
+                    type: string
+                    format: url
+                  vehicleValuation:
+                    type: object
+                    properties:
+                      url:
+                        type: string
+                        example: ''
+                      enabled:
+                        type: boolean
+                        example: false
+                      thresholdInMonths:
+                        type: number
+                        example: 12
+                  repairOrderHistoryDisabled:
+                      type: boolean
+                      example: false
+                  mapBoxEnabled: 
+                      type: boolean
+                      example: true
+                  allowsIAP: 
+                      type: boolean
+                      example: false
+                  carPayEnabled: 
+                      type: boolean
+                      example: true
+                  repairPalEnabled: 
+                      type: boolean
+                      example: true
+components:
+  schemas:
+    Uuid: 
+      type: string
+      example: 9085a727-a00f-4ee6-9363-603a6266b0d5
+      format: uuid
+      pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
+  parameters:
+    AppToken:
+      name: X-Nspire-Apptoken
+      in: header
+      required: false
+      schema:
+        type: string
+        format: string
+        example: eyJzeXN0ZW1JZCI6MjMsImJyYW5kSWQiOjgxfQ==
+        description: >-
+          base64 encoded JSON object with systemId and brandId keys. Only
+          necessary when authorizing, but should be used when making any 
+          requests. Example of unencoded value: {"systemId":17,"brandId":47}
+    CorrelationId:
+      name: X-Nspire-Correlationid
+      in: header
+      description: Unique UUID sent with every request to identify request.
+      required: false
+      schema:
+        $ref: '#/components/schemas/Uuid'
+  securitySchemes:
+    UserToken:
+      type: apiKey
+      in: header
+      name: X-Nspire-Usertoken
+      description: Usertoken acquired when authenticating with identity.spieron.com

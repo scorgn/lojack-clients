@@ -1,0 +1,1513 @@
+openapi: 3.0.3
+info:
+  title: Spireon Services API
+  version: 1.0.0
+  description: API documentation for Spireon services
+servers:
+  - url: https://services.spireon.com/v0/rest/
+security:
+  - UserToken: []
+paths:
+  /identity:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/AppToken'
+        - $ref: '#/components/parameters/CorrelationId'
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                        example: 1854583
+                      globalId:
+                        $ref: '#/components/schemas/Uuid'
+                      username:
+                        $ref: '#/components/schemas/Username'
+                      firstName:
+                        type: string
+                        example: John,
+                      lastName:
+                        type: string
+                        example: Doe,
+                      email:
+                        type: string
+                        format: email
+                        example: email@provider.com
+                        description: Your email address
+                      phone:
+                        type: string
+                        format: phone
+                        example: (502) 820-1852
+                        description: Your phone number
+                      dateCreated: 
+                        $ref: '#/components/schemas/Date'
+                      lastUpdated:
+                        $ref: '#/components/schemas/Date'
+                      createdBy:
+                        type: string
+                        example: "InvitationAuthenticationProvider"
+                      updatedBy: 
+                        $ref: '#/components/schemas/Username'
+                      active:
+                        type: boolean
+                        example: true
+                  account:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: 32732835623VGHSVWH
+                      name:
+                        type: string
+                        example: Consumer - 9529ae2e-8a56-4493-b9fb-3cc1edba8aae
+                      description:
+                        type: string
+                        example: Driver account
+                      brandName:
+                        type: string
+                        example: LoJack
+                      brandCode:
+                        type: string
+                        example: consumerMobile.SkyLink
+                      loginEnabled:
+                        type: boolean
+                        example: true
+                      alternateIds:
+                        type: array
+                        items:
+                          type: string
+                      dateCreated:
+                        $ref: '#/components/schemas/Date'
+                      lastUpdated:
+                        $ref: '#/components/schemas/Date'
+                      createdBy:
+                        type: string
+                        example: enterpriseIntegrationServices@spireon.com
+                      updatedBy:
+                        type: string
+                        example: enterpriseIntegrationServices@spireon.com
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+      operationId: Get user information
+      summary: Get logged in user information
+  /accounts:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/AppToken'
+        - $ref: '#/components/parameters/CorrelationId'
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Account'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+      operationId: Get all accounts
+      summary: Get all accounts
+  /accounts/{id}:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403AccessDenied'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      operationId: Get specific account
+      summary: Get specific account
+      parameters:
+        - $ref: '#/components/parameters/AppToken'
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: id
+          in: path
+          required: true
+          description: Account ID
+          schema: 
+            type: string
+            example: 27274838362HSJQJ6E
+  /users:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/AppToken'
+        - $ref: '#/components/parameters/CorrelationId'
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+      operationId: Get list of users
+      summary: Get list of users
+  /users/{id}:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403AccessDenied'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      operationId: Get single user
+      summary: Get single user
+      parameters:
+        - $ref: '#/components/parameters/AppToken'
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: id
+          in: path
+          required: true
+          description: User ID
+          schema: 
+            type: string
+            example: 32851662
+  /assets:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Asset'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+      operationId: Get all user assets
+      summary: Get all user assets
+      parameters:
+        - $ref: '#/components/parameters/AppToken'
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: id
+          in: query
+          description: Asset ID
+          schema: 
+            $ref: '#/components/schemas/AssetId'
+        - name: color
+          in: query
+          description: Car color
+          schema:
+            type: string
+            example: black
+        - name: vin
+          in: query
+          description: VIN number
+          schema:
+            $ref: '#/components/schemas/VinNumber'
+        - name: year
+          in: query
+          description: Car year
+          schema:
+            type: string
+            example: 2022
+        - name: make
+          in: query
+          description: Car make
+          schema:
+            type: string
+            example: Ford
+        - name: model
+          in: query
+          description: Car model
+          schema:
+            type: string
+            example: Explorer
+        - name: status
+          in: query
+          description: Current asset status
+          schema:
+            type: string
+            example: Stopped
+        - name: active
+          in: query
+          description: Whether asset is active
+          required: false
+          example: true
+          schema:
+            type: boolean
+        - name: limit
+          in: query
+          description: Results limit
+          required: false
+          schema:
+            $ref: '#/components/schemas/Limit'
+        - name: offset
+          in: query
+          description: Results offset
+          required: false
+          schema:
+            $ref: '#/components/schemas/Offset'
+    
+  /assets/{id}:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Asset'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403AccessDenied'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      operationId: Get single asset
+      summary: Get single asset
+      parameters:
+        - $ref: '#/components/parameters/AppToken'
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: id
+          in: path
+          required: true
+          description: Asset ID
+          schema: 
+            $ref: '#/components/schemas/AssetId'
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                attributes:
+                  type: object
+                  properties:
+                    color:
+                      type: string
+                      example: black
+                id:
+                  $ref: '#/components/schemas/AssetId'
+                make:
+                  type: string
+                  example: Ford
+                model:
+                  type: string
+                  example: Explorer
+                name:
+                  type: string
+                  example: Consumer Asset VINNUMBER12345
+                odometer:
+                  type: string
+                  example: 519.89
+                vin:
+                  $ref: '#/components/schemas/VinNumber'
+                year:
+                  type: string
+                  example: 2022
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Asset'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+      operationId: Update asset
+      summary: Update asset
+      parameters:
+        - $ref: '#/components/parameters/AppToken'
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: id
+          in: path
+          required: true
+          description: Asset ID
+          schema: 
+            $ref: '#/components/schemas/AssetId'
+
+
+  /assets/{id}/geofences:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Geofence'
+                  count:
+                    type: integer
+                    example: 10
+                    description: Number of results returned (Paginated)
+                  total:
+                    type: integer
+                    example: 12
+                    description: Total number of geofences
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+      operationId: List All Geofences
+      summary: List All Geofences
+      parameters:
+        - $ref: '#/components/parameters/AppToken'
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: id
+          in: path
+          description: Asset ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/AssetId'
+        - name: limit
+          in: query
+          description: Results limit
+          required: false
+          example: 100
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          description: Results offset
+          required: false
+          example: 0
+          schema:
+            type: integer
+
+  /assets/{id}/geofences/{geofence_id}:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Geofence'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403AccessDenied'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      operationId: Get Single Geofences
+      summary: Get Single Geofences
+      parameters:
+        - $ref: '#/components/parameters/AppToken'
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: id
+          in: path
+          description: Asset ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/AssetId'
+        - name: geofence_id
+          in: path
+          description: Geofence ID
+          required: true
+          schema:
+            type: string
+            example: 1140762987615GIDWGA
+    delete:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+      operationId: Delete Single Geofence
+      summary: Delete Single Geofence
+      parameters:
+        - $ref: '#/components/parameters/AppToken'
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: id
+          in: path
+          description: Asset ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/AssetId'
+        - name: geofence_id
+          in: path
+          description: Geofence ID
+          required: true
+          schema:
+            type: string
+            example: 1140762987615GIDWGA
+    post:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Geofence'
+      responses:
+        '201':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Geofence'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+      operationId: Create Geofence
+      summary: Create Geofence
+      parameters:
+        - $ref: '#/components/parameters/AppToken'
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: id
+          in: path
+          description: Asset ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/AssetId'
+        - name: geofence_id
+          in: path
+          description: Geofence ID
+          required: true
+          schema:
+            type: string
+            example: 1140762987615GIDWGA
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/Geofence'
+                - type: object
+                  properties:
+                    addressLine1:
+                      type: string
+                      example: "35.57907, -78.53696"
+                    addressLine2:
+                      type: string
+                      example: "--"
+
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Geofence'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+      operationId: Update Geofence
+      summary: Update Geofence
+      parameters:
+        - $ref: '#/components/parameters/AppToken'
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: id
+          in: path
+          description: Asset ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/AssetId'
+        - name: geofence_id
+          in: path
+          description: Geofence ID
+          required: true
+          schema:
+            type: string
+            example: 1140762987615GIDWGA
+  /assets/{id}/events:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Event'
+                  count:
+                    type: integer
+                    example: 100
+                    description: Number of results returned (Paginated))
+                  total:
+                    type: integer
+                    example: 1552
+                    description: Total number of results matching criteria
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+      operationId: List All Events
+      summary: List All Events
+      parameters:
+        - $ref: '#/components/parameters/AppToken'
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: id
+          in: path
+          description: Asset ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/AssetId'
+        - name: type
+          in: query
+          description: Type of event query, you can do multiple of these in one request
+          required: false
+          example: EXT_PWR_LOW
+          schema:
+            type: array
+            items: 
+              $ref: '#/components/schemas/EventType'
+        - name: limit
+          in: query
+          description: Results limit
+          required: false
+          example: 100
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          description: Results offset
+          required: false
+          example: 0
+          schema:
+            type: integer
+        - name: startDate
+          in: query
+          description: Start date filter
+          required: false
+          schema:
+            $ref: '#/components/schemas/Date'
+        - name: endDate
+          in: query
+          description: End date filter
+          required: false
+          schema:
+            $ref: '#/components/schemas/Date'
+  /commandRequests:
+    post:
+      parameters:
+        - $ref: '#/components/parameters/AppToken'
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                assetId:
+                  $ref: '#/components/schemas/AssetId'
+                command:
+                  type: string
+                  example: locate
+                  enum: [locate]
+                responseChannel:
+                  type: string
+                  example: consumerMobile_assetId_272956057382HD3JBSD24
+                responseStrategy:
+                  type: string
+                  example: PUSH_NOTIFICATION
+                  enum: [PUSH_NOTIFICATION]
+      responses:
+        '201':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: 436tef1637vd7623g1
+                  command:
+                    type: string
+                    example: locate
+                    enum: [locate]
+                  deviceId:
+                    $ref: '#/components/schemas/DeviceId'
+                  assetId:
+                    $ref: '#/components/schemas/AssetId'
+                  responseChannel:
+                    type: string
+                    example: consumerMobile_assetId_272956057382HD3JBSD24
+                  responseStrategy:
+                    type: string
+                    example: PUSH_NOTIFICATION
+                    enum: [PUSH_NOTIFICATION]
+                  requestedBy:
+                    type: string
+                    example: username31
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+      operationId: Command request
+      summary: Command request
+  /devices:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Device'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+      operationId: Get all user devices
+      summary: Get all user devices
+      parameters:
+        - $ref: '#/components/parameters/AppToken'
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: id
+          in: query
+          description: Device ID
+          required: false
+          schema:
+            $ref: '#/components/schemas/DeviceId'
+        - name: active
+          in: query
+          description: Whether asset is active
+          required: false
+          example: true
+          schema:
+            type: boolean
+        - name: serialNumber
+          in: query
+          description: Device serial number
+          example: 'BSHA638QKNB1'
+          schema:
+            type: string
+        - name: type
+          in: query
+          description: Type of device (unsure of values)
+          required: false
+          example: 'UNKNOWN'
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: Results limit
+          required: false
+          schema:
+            $ref: '#/components/schemas/Limit'
+        - name: offset
+          in: query
+          description: Results offset
+          required: false
+          schema:
+            $ref: '#/components/schemas/Offset'
+  /devices/{id}:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Device'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403AccessDenied'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      operationId: Get single device
+      summary: Get single device
+      parameters:
+        - $ref: '#/components/parameters/AppToken'
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: id
+          in: path
+          required: true
+          description: Device ID
+          schema: 
+            $ref: '#/components/schemas/DeviceId'
+  /instrumentations/{asset_id}:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    $ref: '#/components/schemas/AssetId'
+                  assetId:
+                    $ref: '#/components/schemas/AssetId'
+                  deviceId:
+                    $ref: '#/components/schemas/DeviceId'
+                  deviceRef:
+                    type: object
+                    properties:
+                      id:
+                        $ref: '#/components/schemas/AssetId'
+                      serialNumber: 
+                        type: string
+                        example: BSHA638QKNB1,
+                      features: 
+                        type: array
+                        items:
+                          type: string
+                          enum: [QUICK_LOCATE, NSPIRE_V2]
+                      href:
+                        type: string
+                        example: "/devices/38261738B7DG937BXMQ3"
+                  assetRef:
+                    type: object
+                    properties:
+                      id:
+                        $ref: '#/components/schemas/AssetId'
+                      name:
+                        type: string
+                        example: Consumer Asset VINNUMBER12356,
+                      vin: 
+                        $ref: '#/components/schemas/VinNumber'
+                      href: 
+                        type: string
+                        example: "/assets/272956057382HD3JBSD24"
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403AccessDenied'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      operationId: Asset instrumentations
+      summary: Asset instrumentations
+      parameters:
+        - $ref: '#/components/parameters/AppToken'
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: asset_id
+          in: path
+          description: Asset ID
+          required: true
+          schema:
+            $ref: '#/components/schemas/AssetId'            
+
+  /preferences:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Preference'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+      operationId: Get User Preferences
+      summary: Get User Preferences
+      parameters:
+        - $ref: '#/components/parameters/AppToken'
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: limit
+          in: query
+          description: Results limit
+          required: false
+          schema:
+            $ref: '#/components/schemas/Limit'
+        - name: offset
+          in: query
+          description: Results offset
+          required: false
+          schema:
+            $ref: '#/components/schemas/Offset'
+    post:
+      parameters:
+        - $ref: '#/components/parameters/AppToken'
+        - $ref: '#/components/parameters/CorrelationId'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Preference' 
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Preference'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+      operationId: Update User Preferences
+      summary: Update User Preferences
+  /preferences/{namespace}:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Preference'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403AccessDenied'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      operationId: List User Preferences By Namespace
+      summary: List User Preferences By Namespace
+      parameters:
+        - $ref: '#/components/parameters/AppToken'
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: namespace
+          in: path
+          description: Config namespace (Right now only consumerMobile.SkyLink seems to exist)
+          required: true
+          example: consumerMobile.SkyLink
+          schema:
+            type: string
+            enum: [consumerMobile.SkyLink]
+        - name: limit
+          in: query
+          description: Results limit
+          required: false
+          schema:
+            $ref: '#/components/schemas/Limit'
+        - name: offset
+          in: query
+          description: Results offset
+          required: false
+          schema:
+            $ref: '#/components/schemas/Offset'
+            
+  /preferences/{namespace}/{config}:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Preference'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403AccessDenied'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      operationId: Get Specific User Preferences
+      summary: Get Specific User Preferences
+      parameters:
+        - $ref: '#/components/parameters/AppToken'
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: namespace
+          in: path
+          description: Config namespace (Right now only consumerMobile.SkyLink seems to exist)
+          required: true
+          example: consumerMobile.SkyLink
+          schema:
+            type: string
+            enum: [consumerMobile.SkyLink]
+        - name: config
+          in: path
+          description: Config key
+          required: true
+          example: SpeedAlert.email
+          schema:
+            $ref: '#/components/schemas/PreferenceKey'
+    put:
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Preference' 
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Preference'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+      operationId: Update Specific User Preferences
+      summary: Update Specific User Preferences
+      parameters:
+        - $ref: '#/components/parameters/AppToken'
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: namespace
+          in: path
+          description: Config namespace (Right now only consumerMobile.SkyLink seems to exist)
+          required: true
+          example: consumerMobile.SkyLink
+          schema:
+            type: string
+            enum: [consumerMobile.SkyLink]
+        - name: config
+          in: path
+          description: Config key
+          required: true
+          example: SpeedAlert.email
+          schema:
+            $ref: '#/components/schemas/PreferenceKey'
+  /sass:
+    get:
+      parameters:
+        - $ref: '#/components/parameters/AppToken'
+        - $ref: '#/components/parameters/CorrelationId'
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: SBDGFVBAGWGVQ352521
+                  name:
+                    type: string
+                    example: LoJack SSA
+                  content:
+                    type: string
+                    description: Long HTML output with terms of service
+                  accepted:
+                    type: boolean
+                    example: true
+                  canAccept:
+                    type: boolean
+                    example: false
+                  dateCreated:
+                    $ref: '#/components/schemas/Date'
+                  lastUpdated:
+                    $ref: '#/components/schemas/Date'
+                  createdBy: 
+                    type: string
+                    example: email@spireon.com
+                  ttlDays:
+                    type: number
+                    example: 0
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+      operationId: Get terms of service
+      summary: Get terms of service
+components:
+  securitySchemes:
+    UserToken:
+      type: apiKey
+      in: header
+      name: X-Nspire-Usertoken
+      description: Usertoken acquired when authenticating with identity.spieron.com
+  parameters:
+    AppToken:
+      name: X-Nspire-Apptoken
+      in: header
+      required: true
+      schema:
+        type: string
+        format: string
+        example: eyJzeXN0ZW1JZCI6MjMsImJyYW5kSWQiOjgxfQ==
+        description: >-
+          base64 encoded JSON object with systemId and brandId keys. Only necessary
+          when authorizing, but should be used when making any requests. Example of
+          unencoded value: {"systemId":17,"brandId":47}
+    CorrelationId:
+      name: X-Nspire-Correlationid
+      in: header
+      description: Unique UUID sent with every request to identify request
+      required: false
+      schema:
+        $ref: '#/components/schemas/Uuid'
+  responses:
+    404NotFound:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: string
+                example: ASSET_NOT_FOUND
+              message:
+                type: string
+                example: "Asset ID 279275672388437UXBHA3N not found"  
+              Correlationid:
+                $ref: '#/components/schemas/Uuid'
+                description: The same Correlationid sent in the header if one was sent, otherwise randomly generated
+    403AccessDenied:
+      description: Access was denied
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: string
+                example: ACCESS_DENIED
+                enum: [ACCESS_DENIED]
+              message:
+                type: string
+                example: "Access is denied"
+              Correlationid:
+                $ref: '#/components/schemas/Uuid'
+                description: The same Correlationid sent in the header if one was sent, otherwise randomly generated
+    401Unauthorized:
+      description: You are not authenticated
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: string
+                example: UNAUTHORIZED
+                enum: [UNAUTHORIZED]
+              message:
+                type: string
+                example: "Unauthorized"
+              Correlationid:
+                $ref: '#/components/schemas/Uuid'
+                description: The same Correlationid sent in the header if one was sent, otherwise randomly generated
+  schemas:
+    NullValue:
+      type: string
+      description: Always null
+      enum: ['null']
+    VinNumber:
+      type: string
+      example: VINNUMBER12345
+      format: vin
+      pattern: ^[(A-H|J-N|P|R-Z|0-9)]{17}$
+    Username:
+      type: string
+      example: username31
+    Uuid: 
+      type: string
+      example: 9085a727-a00f-4ee6-9363-603a6266b0d5
+      format: uuid
+      pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
+    Offset:
+      type: integer
+      example: 0
+      description: Result offset used for pagination
+    Limit:
+      type: integer
+      example: 100
+      maximum: 100
+      description: Limit of results to show 
+    AssetId:
+      type: string
+      example: 272956057382HD3JBSD24
+      description: Asset ID
+    DeviceId:
+      type: string
+      example: 38261738B7DG937BXMQ3
+      description: Device ID
+    Device:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/DeviceId'
+        accountId:
+          type: string
+          example: 83628362941HDHQQ63V1
+        active:
+          type: boolean
+          example: true
+        type: 
+          type: string
+          example: UNKNOWN
+        features:
+          type: array
+          items:
+            type: string
+            enum: [QUICK_LOCATE, NSPIRE_V2]
+            description: Not all values are known
+        serialNumber: 
+          type: string
+          example: BSHA638QKNB1
+        dateCreated:
+          $ref: '#/components/schemas/Date'
+        lastUpdated:
+          $ref: '#/components/schemas/Date'
+        createdBy: 
+          type: string
+          example: O2C
+        updatedBy: 
+          type: string
+          format: email
+          example: otaService@spireon.com
+    Account:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 1857274837473DSGY71
+          description: Account ID
+        name:
+          type: string
+          example: "Consumer Account - e3b77bdd-327d-4b92-a4e6-b43925d1c1a2"
+        description:
+          type: string
+          example: "Driver account"
+        brandName:
+          type: string
+          example: "LoJack"
+        brandCode:
+          type: string
+          example: "consumerMobile.SkyLink"
+        loginEnabled:
+          type: boolean
+          example: true
+        alternateIds:
+          type: array
+          example: []
+          items:
+            type: string
+        dateCreated:
+          type: string
+          example: "2022-04-22T00:47:02.000+0000"
+        lastUpdated:
+          type: string
+          example: "2022-04-22T00:47:02.000+0000"
+        createdBy:
+          type: string
+          example: "enterpriseIntegrationServices@spireon.com"
+        updatedBy:
+          type: string
+          example: "enterpriseIntegrationServices@spireon.com"
+    User:
+      type: object
+      properties:
+        id: 
+          type: number
+          example: 1734213
+        globalId: 
+          $ref: '#/components/schemas/Uuid'
+        username: 
+          $ref: '#/components/schemas/Username'
+        firstName:
+          type: string
+          example: Bob
+        lastName: 
+          type: string
+          example: Jones
+        email:
+          type: string
+          format: email
+          example: email@provider.com
+        phone:
+          type: string
+          format: phone
+          example: (504) 828-3219
+        dateCreated:
+          $ref: '#/components/schemas/Date'
+        lastUpdated:
+          $ref: '#/components/schemas/Date'
+        createdBy: 
+          type: string
+          example: InvitationAuthenticationProvider
+        updatedBy: 
+          $ref: '#/components/schemas/Username'
+        active: 
+          type: boolean
+          example: true
+        securityGroups:
+          type: array
+          example: []
+          items:
+            type: object
+    Asset:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/AssetId'
+        active:
+          type: boolean
+          example: true
+        name: 
+          type: string
+          example: Consumer Asset VINNUMBER12345
+        make: 
+          type: string
+          example: Ford
+        model: 
+          type: string
+          example: Explorer
+        year: 
+          type: integer
+          example: 2022
+        vin: 
+          $ref: '#/components/schemas/VinNumber'
+        initialOdometer:
+          type: number
+          example: 9
+        odometer: 
+          type: number
+          example: 516.83
+        distanceDriven:
+          type: number
+          example:  525.83
+        internalBatteryVoltage: 
+          type: number
+          example: 0
+        attributes:
+          type: object
+          properties:
+            color: 
+              type: string
+              example: Black
+            installationDate:
+              $ref: '#/components/schemas/Date'
+            deviceStatus:
+              type: string
+              example: Installed
+        customAttributes: 
+          type: object
+        lastLocation:
+          $ref: '#/components/schemas/Location'
+        locationLastReported: 
+          $ref: '#/components/schemas/Date'
+        speed:
+          type: number
+          example: 0
+        status: 
+          type: string
+          example: Stopped
+          enum: [Stopped]
+        statusStartDate:
+          $ref: '#/components/schemas/Date'
+        batteryVoltage:
+          type: number
+          example: 12.941
+        createdBy: 
+          type: string
+          format: email
+          example: enterpriseIntegrationServices@spireon.com
+        updatedBy:
+          $ref: '#/components/schemas/Username'
+        dateCreated:
+          $ref: '#/components/schemas/Date'
+        lastUpdated:
+          $ref: '#/components/schemas/Date'
+        instrumentationRef:
+          type: object
+          properties:
+            id:
+              $ref: '#/components/schemas/AssetId'
+            deviceId: 
+              $ref: '#/components/schemas/DeviceId'
+    Geofence:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 1140762987615GIDWGA
+        name:
+          type: string
+          example: My Home
+        shape:
+          type: object
+          properties:
+            type: 
+              type: string
+              enum: [RECTANGLE]
+            point1:
+              $ref: '#/components/schemas/Coordinates'
+            point2:
+              $ref: '#/components/schemas/Coordinates'
+        dateCreated: 
+          $ref: '#/components/schemas/Date'
+        lastUpdated: 
+          $ref: '#/components/schemas/Date'
+        createdBy: 
+          $ref: '#/components/schemas/Username'
+        updatedBy: 
+          $ref: '#/components/schemas/Username'
+    GeofenceEventData:
+      type: object
+      properties:
+        geofenceId:
+          type: string
+          example: 1140762987615GIDWGA
+    Date:
+      type: string
+      example: 2022-05-10T03:59:59.999+0000
+    EventType:
+      type: string
+      enum:
+        - EXT_PWR_LOW
+        - SPEED
+        - MOVE_START
+        - MOVE_STOP
+        - MOVE_PER
+        - TRIP_START
+        - TRIP_STOP
+        - SLEEP_ENTER
+        - CFG_RESP
+        - USER_LOC
+        - AUTO_LOC
+        - GEO_ENTER
+        - GEO_EXIT
+    PreferenceKey:
+      type: string
+      enum:
+        - appTheme
+        - GeofenceAlert.email
+        - GeofenceAlert.pushNotification
+        - LowBatteryAlert.email
+        - LowBatteryAlert.pushNotification
+        - ServiceAlerts.email
+        - ServiceAlerts.pushNotification
+        - SpeedAlert.email
+        - SpeedAlert.pushNotification
+    Preference:
+      type: object
+      properties:
+        key:
+          $ref: '#/components/schemas/PreferenceKey'
+        value:
+          type: boolean
+        namespace:
+          type: string
+          example: consumerMobile.SkyLink
+    Address:
+      type: object
+      properties:
+        line1: 
+          type: string
+          example: "123 Street Name"
+        city: 
+          type: string
+          example: "City Name"
+        stateOrProvince: 
+          type: string
+          example: "ST"
+        postalCode: 
+          type: string
+          example: "30098"
+    Coordinates:
+      type: object
+      properties:
+        lat:
+          type: number
+          example: 32.1253
+        lng: 
+          type: number
+          example: -72.219482
+    Location:
+      allOf:
+        - $ref: '#/components/schemas/Coordinates'
+        - type: object
+          properties:
+            address:
+              $ref: '#/components/schemas/Address'
+    Event:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Uuid'
+        type:
+          $ref: '#/components/schemas/EventType'
+        location:
+          $ref: '#/components/schemas/Location'
+        date: 
+          $ref: '#/components/schemas/Date'
+        odometer: 
+          type: number
+          example: 324.19
+        batteryVoltage:
+          type: number
+          example: 15.124
+        heading:
+          type: integer
+          example: 250
+        speed:
+          type: integer
+          example: 0
+        engineHours:
+          type: integer
+          example:  0
+        distanceDriven:
+          type: number
+          example: 724.241
+        signalStrength:
+          type: number
+          example: 0.815
+        gpsFixQuality: 
+          type: string
+          enum: [GOOD, BAD, HISTORIC]
+        eventData:
+          discriminator:
+            propertyName: type
+            mapping: 
+              GEO_ENTER: '#/components/schemas/GeofenceEventData'
+              GEO_EXIT: '#/components/schemas/GeofenceEventData'
+              SPEED: '#/components/schemas/NullValue'
+              EXT_PWR_LOW: '#/components/schemas/NullValue'
+              MOVE_START: '#/components/schemas/NullValue'
+              MOVE_STOP: '#/components/schemas/NullValue'
+              MOVE_PER: '#/components/schemas/NullValue'
+              TRIP_START: '#/components/schemas/NullValue'
+              TRIP_STOP: '#/components/schemas/NullValue'
+              SLEEP_ENTER: '#/components/schemas/NullValue'
+              CFG_RESP: '#/components/schemas/NullValue'
+              USER_LOC: '#/components/schemas/NullValue'
+              AUTO_LOC: '#/components/schemas/NullValue'
+          anyOf:
+            - $ref: '#/components/schemas/GeofenceEventData'
+            - $ref: '#/components/schemas/NullValue'
+    
+tags: []

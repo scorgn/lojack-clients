@@ -1,0 +1,59 @@
+#!/usr/bin/env zsh
+
+BASE_DIR="${0:a:h:h}"
+OPENAPI_GENERATOR_DIR="${BASE_DIR}/src/lojack_clients"
+OPENAPI_TEMPLATES_DIR="${BASE_DIR}/client-generator/templates"
+OPENAPI_CONFIGS_DIR="${BASE_DIR}/client-generator/configs"
+OPENAPI_DOCS_DIR="${BASE_DIR}/openapi"
+
+existing_clients=(
+    identity
+    automotive
+    maintenance
+    services
+)
+
+error() {
+    print -P "%F{red}$@%F{reset}" >&2
+}
+
+main() {
+    clients=()
+
+    if [[ -n $1 ]]; then
+        for v in $@; do
+            if [[ " ${existing_clients[@]} " =~ " ${v} " ]]; then
+                clients+=($v)
+            else
+                error "Client ${v} does not exist"
+            fi
+        done
+        if [[ ${#clients[@]} -eq 0 ]]; then
+            error "None of supplied clients exist"
+            return 1
+        fi
+    else
+        clients=(
+            identity
+            automotive
+            maintenance
+            services
+        )
+    fi
+
+    cd "${OPENAPI_GENERATOR_DIR}"
+
+    for client in $clients; do
+        client_dir=$(printf "$client_api_name_format" "$client")
+        [[ -d "${OPENAPI_GENERATOR_DIR}/${client}" ]] && command="update" || command="generate"
+
+        openapi-python-client $command\
+            --meta none \
+            --config "${OPENAPI_CONFIGS_DIR}/${client}.yaml" \
+            --custom-template-path "${OPENAPI_TEMPLATES_DIR}/${client}" \
+            --path "${OPENAPI_DOCS_DIR}/${client}/openapi.yaml"
+    done
+}
+
+main $@
+exit $?

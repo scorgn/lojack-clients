@@ -1,0 +1,152 @@
+openapi: 3.0.3
+info:
+  title: Spireon Maintenance API
+  version: 1.0.0
+  description: API documentation for Spireon maintenance service
+servers:
+  - url: https://maintenance.spireon.com
+security:
+  - UserToken: []
+paths:
+  /automotive/maintenanceSchedule:
+    get:
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id: 
+                          type: string
+                          format: uuid
+                          example: 8e4cd954-41a3-4a1f-98d4-ab6b306614d9
+                        serviceInterval:
+                          type: number
+                          example: 5000
+                          description: The mileage interval at which services are recommend (eg. new services every 5000 miles)
+                        serviceSchedule:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              mileage:
+                                type: number
+                                example: 15000
+                              serviceItems:
+                                type: object
+                                properties:
+                                  severity:
+                                    type: string
+                                    example: Normal
+                                    enum: [Normal, Severe]
+                                  action:
+                                    type: string
+                                    example: Inspect
+                                  literalName:
+                                    type: string
+                                    example: Floor Mat Inspect
+                  count: 
+                    type: number
+                    example: 1
+                  total:
+                    type: number
+                    example: 1
+      operationId: Get maintenance schedule
+      summary: Get maintenance schedule for vehicle by VIN
+      parameters:
+        - $ref: '#/components/parameters/AppToken'
+        - $ref: '#/components/parameters/CorrelationId'
+        - name: vin
+          in: query
+          required: true
+          schema:
+            type: string
+            example: VINNUMBER123456
+  /repairOrders:
+    get:
+      responses:
+        '200':
+          description: 'OK'
+          headers: {}
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  content:
+                    type: array
+                    example: []
+                    items:
+                      type: object
+                  count:
+                    type: number
+                    example: 0
+                  total:
+                    type: number
+                    example: 0
+      operationId: Get repair orders
+      summary: Get repair orders for vehicle
+      parameters:
+        - name: vin
+          in: query
+          required: false
+          schema:
+            type: string
+            example: VINNUMBER123456
+          description: Either vin or assetId required
+        - name: assetId
+          in: query
+          required: false
+          schema:
+            type: string
+            example: 362846328238BASHD2N
+          description: Either assetId or vin required
+        - name: sort
+          in: query
+          required: false
+          schema:
+            type: string
+            example: openDate:desc
+        - $ref: '#/components/parameters/AppToken'
+        - $ref: '#/components/parameters/CorrelationId'
+components:
+  schemas:
+    Uuid: 
+      type: string
+      example: 9085a727-a00f-4ee6-9363-603a6266b0d5
+      format: uuid
+      pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
+  parameters:
+    AppToken:
+      name: X-Nspire-Apptoken
+      in: header
+      required: true
+      schema:
+        type: string
+        format: string
+        example: eyJzeXN0ZW1JZCI6MjMsImJyYW5kSWQiOjgxfQ==
+        description: >-
+          base64 encoded JSON object with systemId and brandId keys. Only necessary
+          when authorizing, but should be used when making any requests. Example of
+          unencoded value: {"systemId":17,"brandId":47}
+    CorrelationId:
+      name: X-Nspire-Correlationid
+      in: header
+      description: Unique UUID sent with every request to identify request
+      required: false
+      schema:
+        $ref: '#/components/schemas/Uuid'
+  securitySchemes:
+    UserToken:
+      type: apiKey
+      in: header
+      name: X-Nspire-Usertoken
+      description: Usertoken acquired when authenticating with identity.spieron.com

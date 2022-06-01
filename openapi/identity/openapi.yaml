@@ -1,0 +1,73 @@
+openapi: 3.0.3
+info:
+  title: Spireon Identity API
+  version: 1.0.0
+  description: API documentation for Spireon identity service used for authenticating
+servers:
+  - url: https://identity.spireon.com
+paths:
+  /identity/token:
+    get:
+      security:
+        - basicAuth: []
+      responses:
+        '200':
+          description: OK
+          headers: {}
+          content: 
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                    format: jwt
+                    example: "{jwt}"
+                  scope:
+                    type: string
+                    example: ACCOUNT_USER_SCOPE
+                    description: scope
+                  expiresOn:
+                    $ref: '#/components/schemas/Date'
+                  refreshBy:
+                    $ref: '#/components/schemas/Date'
+                  refreshInSeconds: 
+                    type: number
+                    example: 86340
+      parameters:
+        - $ref: '#/components/parameters/AppToken'
+        - $ref: '#/components/parameters/CorrelationId'
+components:
+  schemas:
+    Date:
+      type: string
+      example: 2022-05-10T03:59:59.999+0000
+    Uuid: 
+      type: string
+      example: 9085a727-a00f-4ee6-9363-603a6266b0d5
+      format: uuid
+      pattern: ^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$
+  parameters:
+    AppToken:
+      name: X-Nspire-Apptoken
+      in: header
+      required: false
+      schema:
+        type: string
+        format: string
+        example: eyJzeXN0ZW1JZCI6MjMsImJyYW5kSWQiOjgxfQ==
+        description: >-
+          base64 encoded JSON object with systemId and brandId keys. Only
+          necessary when authorizing, but should be used when making any 
+          requests. Example of unencoded value: {"systemId":17,"brandId":47}
+    CorrelationId:
+      name: X-Nspire-Correlationid
+      in: header
+      description: Unique UUID sent with every request to identify request.
+      required: false
+      schema:
+        $ref: '#/components/schemas/Uuid'
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
